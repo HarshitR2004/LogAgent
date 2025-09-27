@@ -1,0 +1,76 @@
+[2025-09-27T11:34:21.276829] ERROR - User: zfrench - IP: 189.67.138.67 - POST /api/v1/login - Status: 500 - Latency: 214ms
+Message: User zfrench accessed /api/v1/login
+[2025-09-27T11:34:21.545658] WARNING - User: christinecantrell - IP: 104.127.8.73 - GET /health - Status: 400 - Latency: 100ms
+Message: Request processed successfully
+[2025-09-27T11:34:21.841595] WARNING - User: tcortez - IP: 33.54.112.170 - GET / - Status: 401 - Latency: 185ms
+Message: API response sent
+[2025-09-27T11:34:22.850090] WARNING - User: daniel19 - IP: 45.83.235.212 - GET /health - Status: 400 - Latency: 72ms
+Message: Processing GET request
+[2025-09-27T11:37:22.082082] WARNING - User: johnsonmichael - IP: 201.183.214.107 - GET /health - Status: 403 - Latency: 84ms
+Message: User johnsonmichael accessed /health
+[2025-09-27T11:37:22.658078] ERROR - User: jessica54 - IP: 220.202.32.104 - POST /api/v1/orders - Status: 500 - Latency: 208ms
+Message: Processing POST request
+[2025-09-27T11:37:22.876914] ERROR - User: lkelly - IP: 28.3.74.11 - GET /health - Status: 500 - Latency: 182ms
+Message: Processing GET request
+[2025-09-27T11:37:23.281361] WARNING - User: oroberson - IP: 223.172.246.180 - POST /api/v1/login - Status: 400 - Latency: 167ms
+Message: Handling POST /api/v1/login
+[2025-09-27T11:37:24.011554] WARNING - User: james42 - IP: 60.233.42.107 - GET /health - Status: 400 - Latency: 127ms
+Message: Processing GET request
+[2025-09-27T11:37:26.532707] WARNING - User: hoganchad - IP: 114.214.115.200 - GET /api/v1/users - Status: 401 - Latency: 138ms
+Message: Service request completed
+[2025-09-27T11:37:28.062648] WARNING - User: brendadorsey - IP: 128.140.248.254 - POST /api/v1/login - Status: 403 - Latency: 116ms
+Message: API call from 128.140.248.254
+[2025-09-27T11:37:28.530574] WARNING - User: candiceblack - IP: 202.117.95.110 - POST /api/v1/orders - Status: 404 - Latency: 182ms
+Message: Handling POST /api/v1/orders - exception occurred
+[2025-09-27T11:51:56.975586] WARNING - User: davidgill - IP: 121.28.73.166 - GET /api/v1/users - Status: 403 - Latency: 100ms
+Message: API call from 121.28.73.166
+[2025-09-27T11:51:57.302308] WARNING - User: christopher99 - IP: 205.26.242.232 - GET / - Status: 404 - Latency: 120ms
+Message: User christopher99 accessed /
+[2025-09-27T11:51:59.796736] WARNING - User: christopher99 - IP: 205.26.242.232 - POST /api/v1/orders - Status: 403 - Latency: 128ms
+Message: User christopher99 accessed /api/v1/orders
+[2025-09-27T11:52:00.653822] WARNING - User: pfranklin - IP: 84.210.93.215 - GET /api/v1/users - Status: 403 - Latency: 129ms
+Message: Request processed successfully
+[2025-09-27T11:52:01.087539] WARNING - User: coreyperez - IP: 29.74.38.114 - GET /health - Status: 400 - Latency: 128ms
+Message: Service request completed
+[2025-09-27T11:52:02.879337] WARNING - User: caseygraves - IP: 193.71.229.199 - GET /api/v1/orders - Status: 400 - Latency: 146ms
+Message: Processing GET request
+[2025-09-27T11:52:03.799768] WARNING - User: coreyperez - IP: 29.74.38.114 - POST /api/v1/login - Status: 403 - Latency: 60ms
+Message: API response sent
+[2025-09-27T11:52:04.079598] WARNING - User: danielle06 - IP: 33.247.128.254 - GET /health - Status: 403 - Latency: 154ms
+Message: API response sent
+[2025-09-27T11:52:04.406362] WARNING - User: danielle06 - IP: 33.247.128.254 - POST /api/v1/users - Status: 401 - Latency: 16ms
+Message: User danielle06 accessed /api/v1/users
+[2025-09-27T11:52:05.216929] WARNING - User: justin93 - IP: 164.115.10.92 - GET / - Status: 403 - Latency: 172ms
+Message: User justin93 accessed / - failed occurred
+[2025-09-27T11:55:04.168464] ERROR - User: martinchristopher - IP: 193.222.105.7 - GET / - Status: 500 - Latency: 198ms
+Message: Request processed successfully
+[2025-09-27T12:09:01.909590] ERROR - User: mathewcollier - IP: 83.215.127.87 - GET /health - Status: 500 - Latency: 191ms
+Message: API response sent
+[2025-09-27T12:09:02.344397] WARNING - User: ericmalone - IP: 215.233.207.5 - GET / - Status: 403 - Latency: 134ms
+Message: Processing GET request
+[2025-09-27T12:13:28.434998] ERROR - User: kharrington - IP: 190.136.40.197 - POST /api/v1/users - Status: 500 - Latency: 168ms
+Message: API response sent
+[2025-09-27T12:13:36.678553] WARNING - User: zwiggins - IP: 52.254.172.253 - GET / - Status: 401 - Latency: 197ms
+Message: API call from 52.254.172.253
+[2025-09-27T12:13:39.314164] WARNING - User: martinezjoseph - IP: 210.136.212.63 - GET /api/v1/orders - Status: 403 - Latency: 40ms
+Message: User martinezjoseph accessed /api/v1/orders
+[2025-09-27T12:13:39.673463] ERROR - User: howellrachel - IP: 192.255.155.239 - POST /api/v1/orders - Status: 500 - Latency: 202ms
+Message: Request processed successfully
+[2025-09-27T12:13:40.738177] ERROR - User: johnhughes - IP: 212.67.35.78 - GET /api/v1/users - Status: 500 - Latency: 244ms
+Message: Request processed successfully
+[2025-09-27T12:23:54.559550] WARNING - User: joelwood - IP: 129.227.100.182 - POST /api/v1/login - Status: 403 - Latency: 167ms
+Message: Request processed successfully
+[2025-09-27T12:23:54.856025] WARNING - User: joelwood - IP: 129.227.100.182 - GET /api/v1/orders - Status: 400 - Latency: 176ms
+Message: User joelwood accessed /api/v1/orders
+[2025-09-27T12:23:55.542868] WARNING - User: bryan05 - IP: 28.104.16.2 - GET /health - Status: 403 - Latency: 148ms
+Message: Request processed successfully
+[2025-09-27T12:23:56.149806] WARNING - User: david98 - IP: 203.45.54.216 - GET / - Status: 404 - Latency: 126ms
+Message: Request processed successfully
+[2025-09-27T12:23:56.474845] WARNING - User: lauren88 - IP: 217.63.203.137 - POST /api/v1/login - Status: 404 - Latency: 109ms
+Message: Request processed successfully
+[2025-09-27T12:23:56.820964] WARNING - User: samanthawhite - IP: 144.210.154.122 - GET /health - Status: 400 - Latency: 116ms
+Message: Request to /health completed
+[2025-09-27T12:23:57.131418] WARNING - User: brandi44 - IP: 150.221.157.111 - POST /api/v1/orders - Status: 403 - Latency: 133ms
+Message: Processing POST request
+[2025-09-27T12:24:01.184137] WARNING - User: wayne73 - IP: 76.121.21.70 - GET /api/v1/orders - Status: 401 - Latency: 134ms
+Message: Request to /api/v1/orders completed

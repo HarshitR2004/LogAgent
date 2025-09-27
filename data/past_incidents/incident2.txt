@@ -1,0 +1,3 @@
+Analysis:
+- Recurring patterns: Several incidents tied to configuration and dependency management issues.  
+- Possible root causes: Gaps in automated checks for certificates, environment configs, and dependencies.  

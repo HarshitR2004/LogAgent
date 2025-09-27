@@ -1,7 +1,9 @@
 import asyncio
 import json
+import sys
+import os
 from pathlib import Path
-from fastapi import FastAPI
+from fastapi import FastAPI, BackgroundTasks
 from fastapi.responses import StreamingResponse
 from DataCollectors.Telemenetry import TelemetryGenerator
 from DataCollectors.CommitsCollector import CommitsCollector
@@ -9,29 +11,65 @@ from Services.LogFilter import LogFilter
 from Services.CollectMetrics import MetricsCollector
 from Services.EventDetection import EventDetection
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'AI'))
+from Agent import Agent
+
 app = FastAPI()
 generator = TelemetryGenerator(min_delay=0.2, max_delay=0.8)
 log_filter = LogFilter()
 metrics_collector = MetricsCollector()
 event_detector = EventDetection()
 
+ai_agent = Agent()
+agent_analysis_result = None
+analysis_in_progress = False 
+
+async def run_agent_analysis():
+    global agent_analysis_result, analysis_in_progress
+    
+    # Prevent multiple simultaneous analyses
+    if analysis_in_progress:
+        print("Agent analysis already in progress - skipping")
+        return
+    
+    analysis_in_progress = True
+    try:
+        print("Starting comprehensive AI Agent root cause analysis...")
+        
+        # Run the agent in a thread pool to avoid blocking the event loop
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(None, ai_agent.invoke)
+        
+        print(f"DEBUG: Raw agent result type: {type(result)}")
+        print(f"DEBUG: Raw agent result: {result}")
+        
+        if isinstance(result, dict) and 'output' in result:
+            agent_analysis_result = result['output']
+            print(f"DEBUG: Extracted output: {agent_analysis_result}")
+        else:
+            agent_analysis_result = str(result)
+            print(f"DEBUG: Converted to string: {agent_analysis_result}")
+            
+        print("Comprehensive AI Agent root cause analysis completed!")
+        print(f"DEBUG: Final agent_analysis_result is None: {agent_analysis_result is None}")
+        print(f"DEBUG: Final agent_analysis_result length: {len(str(agent_analysis_result)) if agent_analysis_result else 0}")
+        
+    except Exception as e:
+        print(f"Error running AI Agent analysis: {e}")
+        agent_analysis_result = f"Error during root cause analysis: {e}"
+    finally:
+        analysis_in_progress = False
+
+def start_agent_analysis_background():
+    """Start agent analysis as a background task"""
+    asyncio.create_task(run_agent_analysis())
+
 def telemetry_callback(data_type, data):
-    # Always process the data first, then check for events
+    # Just collect data without automatic analysis triggers
     if data_type == "log":
         log_filter.filter_logs(data)
-        
-        # Check for log-based events and stop if detected
-        if event_detector.detect_from_log(data):
-            print(f"EVENT DETECTED IN LOG - STOPPING TELEMETRY")
-            generator.stop_generation()
-    
     elif data_type == "metric":
         metrics_collector.collect_metric(data)
-        
-        # Check for metric-based events and stop if detected
-        if event_detector.detect_from_metric(data):
-            print(f"EVENT DETECTED IN METRICS - STOPPING TELEMETRY")
-            generator.stop_generation()
 
 async def generator_loop():
     await generator._generator_loop(websocket=None)
@@ -65,20 +103,17 @@ async def stream_metrics():
 async def collect_commits(repo: str = None, k: int = 3, use_static: bool = False):
     
     try:
-        # If use_static is True or no repo provided, use static data
         if use_static or not repo:
             collector = CommitsCollector("")
             commits = collector.get_commits_from_json(k)
             return {"commits": commits}
         
-        # Try to use real repository
         collector = CommitsCollector(repo)
         try:
             commits_data = collector.get_last_k_commits(k)
             return {"commits": commits_data}
         except Exception as repo_error:
             print(f"Repository access failed: {repo_error}")
-            # Fallback to static data
             commits = collector.get_commits_from_json(k)
             return {"commits": commits}
     
@@ -88,8 +123,6 @@ async def collect_commits(repo: str = None, k: int = 3, use_static: bool = False
 
 @app.get("/commits/info")
 async def get_commits_info():
-    """Get information about available commit data sources"""
-    # Check if static data exists
     static_data_available = False
     static_commit_count = 0
     try:
@@ -129,7 +162,46 @@ async def get_status():
         "status": "running" if generator.is_generating() else "stopped",
         "is_generating": generator.is_generating()
     }
-   
+
+@app.get("/agent-analysis")
+async def get_agent_analysis():
+    """Get the comprehensive AI Agent root cause analysis results"""
+    global agent_analysis_result, analysis_in_progress
+    
+    # Debug logging
+    print(f"DEBUG: analysis_in_progress={analysis_in_progress}")
+    print(f"DEBUG: agent_analysis_result is None: {agent_analysis_result is None}")
+    if agent_analysis_result:
+        print(f"DEBUG: agent_analysis_result length: {len(str(agent_analysis_result))}")
+    
+    if analysis_in_progress:
+        return {
+            "status": "in_progress",
+            "message": "Root cause analysis is currently running. Analysis uses all 4 tools: commits, logs, metrics, and past events.",
+            "analysis": None
+        }
+    
+    if agent_analysis_result is None:
+        return {
+            "status": "no_analysis",
+            "message": "No root cause analysis available. Use the 'Run Root Cause Analysis' button to trigger manual analysis.",
+            "analysis": None
+        }
+    
+    return {
+        "status": "completed",
+        "message": "Comprehensive root cause analysis completed using all analysis tools",
+        "analysis": agent_analysis_result
+    }
+
+@app.post("/trigger-analysis")
+async def trigger_analysis_manually():
+    """Manually trigger agent analysis for testing"""
+    if analysis_in_progress:
+        return {"status": "error", "message": "Analysis already in progress"}
+    
+    start_agent_analysis_background()
+    return {"status": "started", "message": "Agent analysis started in background"}
 
 @app.get("/")
 async def health():

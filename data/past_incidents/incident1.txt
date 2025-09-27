@@ -1,0 +1,3 @@
+Analysis:
+- Recurring patterns: Multiple incidents linked to system strain during peak usage (database latency, API timeouts).  
+- Possible root causes: Resource saturation (connection pool limits, disk space constraints).  

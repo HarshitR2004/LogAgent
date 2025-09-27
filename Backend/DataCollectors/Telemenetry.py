@@ -67,7 +67,7 @@ class TelemetryGenerator:
             f"Service request completed"
         ]
         
-        if random.random() < 0.20:
+        if random.random() < 0.10:
             error_word = random.choice(error_keywords)
             message = f"{random.choice(base_messages)} - {error_word} occurred"
         else:

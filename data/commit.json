@@ -1,0 +1,54 @@
+{
+  "commits": [
+    {
+      "hash": "a1b2c3d4",
+      "message": "Added login endpoint",
+      "files": [
+        {
+          "filename": "routes/login.py",
+          "code": "def login(user, password):\n    if user == 'admin' and password == 'secret':\n        return {'status': 'ok'}\n    else:\n        status = 'fail'\n        # BUG: function does not return anything here"
+        }
+      ]
+    },
+    {
+      "hash": "d4c3b2a1",
+      "message": "Created users API",
+      "files": [
+        {
+          "filename": "routes/users.py",
+          "code": "users = []\n\n def get_users():\n     return user  # BUG: 'user' is undefined, should be 'users'\n\n def create_user(user):\n     users.append(user)\n     return user"
+        }
+      ]
+    },
+    {
+      "hash": "9f8e7d6c",
+      "message": "Added orders service",
+      "files": [
+        {
+          "filename": "routes/orders.py",
+          "code": "orders = []\n\n def get_orders():\n     return orders\n\n def create_order(order):\n     orders.append(order)\n     return oder  # BUG: 'oder' is a typo, should be 'order'"
+        }
+      ]
+    },
+    {
+      "hash": "7e6d5c4b",
+      "message": "Added health check",
+      "files": [
+        {
+          "filename": "routes/health.py",
+          "code": "def health():\n    status = {'status': 'healthy'}\n    print(sttus)  # BUG: 'sttus' is a typo, should be 'status'\n    return status"
+        }
+      ]
+    },
+    {
+      "hash": "4f3e2d1c",
+      "message": "Setup root endpoint",
+      "files": [
+        {
+          "filename": "routes/root.py",
+          "code": "def root():\n    message = 'Welcome to the API'\n    return mesage  # BUG: 'mesage' is a typo, should be 'message'"
+        }
+      ]
+    }
+  ]
+}
