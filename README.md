@@ -1,4 +1,4 @@
-# LogAgent - AI-Powered System Monitoring & Root Cause Analysis
+# LogAgent - AI-Powered System Monitoring  Agent
 
 LogAgent is an advanced real-time system monitoring platform that combines intelligent telemetry collection with AI-powered root cause analysis. The system provides comprehensive insights into system performance, logs, and code changes while leveraging artificial intelligence to automatically identify potential issues and their underlying causes.
 
