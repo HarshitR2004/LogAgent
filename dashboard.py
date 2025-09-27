@@ -519,7 +519,7 @@ def main():
                     
                     # Create loading progress display
                     st.markdown("### Analysis Status")
-                    st.info("The AI Agent is systematically analyzing all available data sources using 4 specialized tools...")
+                    st.info("The AI Agent is systematically analyzing all available data sources using 3 specialized tools...")
                     
                     # Progress indicator - simplified version
                     progress_bar = st.progress(0)
@@ -527,7 +527,7 @@ def main():
                         progress_bar.progress(i + 1)
                         
                     # Current analysis step
-                    st.text("Analyzing: System logs, Performance metrics, Code commits, Historical incidents")
+                    st.text("Analyzing: System logs, Performance metrics, Code commits")
                     
                     # Analysis tools information
                     st.markdown("### Active Analysis Tools")
@@ -541,7 +541,6 @@ def main():
                     with tools_col2:
                         st.markdown("**Pattern Analysis:**") 
                         st.write("• Code Commits Analysis")
-                        st.write("• Historical Incidents Analysis")
                     
                     st.markdown("---")
                     st.info("**Analysis is running. Results will appear here when complete.**")
@@ -565,7 +564,7 @@ def main():
                         # Try to parse structured RCA format
                         rca_sections = {
                             "Timeline": ["Timeline:", "Error Timeline:"],
-                            "Root Cause Indicators": ["Root Cause Indicators:", "Root Causes:", "Historical Root Causes:"],
+                            "Root Cause Indicators": ["Root Cause Indicators:", "Root Causes:"],
                             "Risk Factors": ["Risk Factors:", "Correlation:", "Performance Anomalies:"],
                             "System Impact": ["System Impact:", "Technical Impact:", "Failure Patterns:"],
                             "Recurring Patterns": ["Recurring Patterns:", "System Vulnerabilities:"],

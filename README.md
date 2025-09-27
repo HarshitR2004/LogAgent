@@ -1,4 +1,4 @@
-# LogAgent - AI-Powered System Monitoring  Agent
+# LogAgent - AI-Powered System Monitoring Agent
 
 LogAgent is an advanced real-time system monitoring platform that combines intelligent telemetry collection with AI-powered root cause analysis. The system provides comprehensive insights into system performance, logs, and code changes while leveraging artificial intelligence to automatically identify potential issues and their underlying causes.
 
@@ -32,7 +32,6 @@ LogAgent is an advanced real-time system monitoring platform that combines intel
 ### AI & Machine Learning
 - **LangChain**: Framework for building AI agent workflows
 - **Google Gemini 2.5 Flash**: Large language model for natural language processing
-- **ChromaDB**: Vector database for similarity search and historical analysis
 - **Custom AI Tools**: Specialized analyzers for different data types
 
 
@@ -86,11 +85,10 @@ streamlit run dashboard.py
 ### AI Analysis Workflow
 1. **Data Collection**: System continuously collects logs, metrics, and repository data
 2. **Manual Trigger**: Use "Run Root Cause Analysis" button to start AI analysis
-3. **Multi-Tool Processing**: AI agent uses 4 specialized analysis tools:
+3. **Multi-Tool Processing**: AI agent uses 3 specialized analysis tools:
    - Log Analysis Tool
    - Metrics Analysis Tool
    - Commits Analysis Tool
-   - Historical Events Analysis Tool
 4. **Comprehensive Report**: Receive detailed analysis with root cause identification
 
 ## 🏗 Architecture
@@ -110,10 +108,8 @@ streamlit run dashboard.py
   - **Logs Analyzer**: Identifies error patterns and system issues
   - **Metrics Analyzer**: Analyzes performance trends and anomalies
   - **Commits Analyzer**: Correlates code changes with system issues
-  - **Past Events Analyzer**: Leverages historical incident data
 
 #### Data Storage
-- **ChromaDB**: Vector embeddings for similarity search
 - **In-Memory Buffers**: Real-time data streaming queues
 
 ### Data Flow
@@ -129,7 +125,7 @@ streamlit run dashboard.py
 - **Model**: Google Gemini 2.5 Flash
 - **Agent Type**: Zero-shot React Description
 - **Max Iterations**: 15 for comprehensive analysis
-- **Tools**: 4 specialized analysis tools
+- **Tools**: 3 specialized analysis tools
 
 ### Monitoring Configuration
 - **Data Retention**: Configurable retention periods for different data types
