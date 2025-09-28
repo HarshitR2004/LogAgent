@@ -11,13 +11,8 @@ LogAgent is an advanced real-time system monitoring platform with AI-powered roo
 
 ### AI-Powered Analysis
 - **Comprehensive Root Cause Analysis**: AI agent that analyzes multiple data sources simultaneously
-- **Pattern Recognition**: Identifies recurring issues and system vulnerabilities
 - **Multi-Tool Analysis**: Uses specialized analyzers for logs, metrics, and commits
 
-### Advanced Capabilities
-- **Automated Event Detection**: Intelligent detection of system anomalies and performance issues
-- **Code Change Correlation**: Analyzes recent commits in relation to system issues
-- **Performance Trend Analysis**: Tracks system performance patterns over time
 
 ## 🛠 Tech Stack
 
@@ -25,9 +20,7 @@ LogAgent is an advanced real-time system monitoring platform with AI-powered roo
 - **FastAPI**: High-performance Python web framework for API development
 
 ### Frontend & Visualization
-- **React 19**: Modern JavaScript framework with hooks and functional components
-- **Tailwind CSS v4**: Utility-first CSS framework for responsive design
-- **Vite**: Lightning-fast build tool and development server
+- **React**: Modern JavaScript framework with hooks and functional components
 - **Recharts**: Interactive data visualization library for metrics and analytics
 - **Lucide React**: Modern icon library for UI components
 
@@ -110,7 +103,6 @@ npm run dev
 ### System Components
 
 #### Backend Services
-- **Telemetry Generator**: Produces realistic system telemetry data
 - **Log Filter**: Processes and categorizes log entries
 - **Metrics Collector**: Gathers system performance data
 - **Event Detection**: Identifies significant system events
@@ -125,7 +117,6 @@ npm run dev
 
 #### Frontend Components
 - **Modern React Architecture**: Component-based architecture with hooks and context
-- **Responsive Dashboard**: Adaptive layout that works on desktop and tablet devices  
 - **Real-time Updates**: Live data streaming and automatic refresh capabilities
 - **Interactive Charts**: Dynamic metrics visualization using Recharts library
 
