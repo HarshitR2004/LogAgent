@@ -1,6 +1,6 @@
 # LogAgent - AI-Powered System Monitoring Agent
 
-LogAgent is an advanced real-time system monitoring platform that combines intelligent telemetry collection with AI-powered root cause analysis. The system provides comprehensive insights into system performance, logs, and code changes while leveraging artificial intelligence to automatically identify potential issues and their underlying causes.
+LogAgent is an advanced real-time system monitoring platform with AI-powered root cause analysis. The system provides comprehensive insights into system performance, logs, and code changes while leveraging artificial intelligence to automatically identify potential issues and their underlying causes.
 
 ## 🚀 Features
 
@@ -12,14 +12,12 @@ LogAgent is an advanced real-time system monitoring platform that combines intel
 ### AI-Powered Analysis
 - **Comprehensive Root Cause Analysis**: AI agent that analyzes multiple data sources simultaneously
 - **Pattern Recognition**: Identifies recurring issues and system vulnerabilities
-- **Historical Context**: Leverages past incident data for better analysis accuracy
-- **Multi-Tool Analysis**: Uses specialized analyzers for logs, metrics, commits, and historical events
+- **Multi-Tool Analysis**: Uses specialized analyzers for logs, metrics, and commits
 
 ### Advanced Capabilities
 - **Automated Event Detection**: Intelligent detection of system anomalies and performance issues
 - **Code Change Correlation**: Analyzes recent commits in relation to system issues
 - **Performance Trend Analysis**: Tracks system performance patterns over time
-- **Manual Analysis Triggering**: On-demand comprehensive analysis with detailed reporting
 
 ## 🛠 Tech Stack
 
@@ -27,7 +25,11 @@ LogAgent is an advanced real-time system monitoring platform that combines intel
 - **FastAPI**: High-performance Python web framework for API development
 
 ### Frontend & Visualization
-- **Streamlit**: Interactive web application framework for data visualization
+- **React 19**: Modern JavaScript framework with hooks and functional components
+- **Tailwind CSS v4**: Utility-first CSS framework for responsive design
+- **Vite**: Lightning-fast build tool and development server
+- **Recharts**: Interactive data visualization library for metrics and analytics
+- **Lucide React**: Modern icon library for UI components
 
 ### AI & Machine Learning
 - **LangChain**: Framework for building AI agent workflows
@@ -38,6 +40,8 @@ LogAgent is an advanced real-time system monitoring platform that combines intel
 ## 📋 System Requirements
 
 - Python 3.10 or higher
+- Node.js 18 or higher
+- npm or yarn package manager
 
 ## 🚀 Installation & Setup
 
@@ -47,8 +51,16 @@ git clone https://github.com/HarshitR2004/LogAgent.git
 ```
 
 ### 2. Install Dependencies
+
+#### Backend Dependencies
 ```bash
 pip install -r requirements.txt
+```
+
+#### Frontend Dependencies
+```bash
+cd frontend
+npm install
 ```
 
 ### 3. Environment Configuration
@@ -59,21 +71,23 @@ GOOGLE_API_KEY=your_gemini_api_key_here
 
 ### 4. Start the Backend Services
 ```bash
-cd Backend
+cd backend
 uvicorn main:app --reload --port 8000
 ```
 
-### 5. Launch the Dashboard
+### 5. Launch the Frontend Dashboard
 In a new terminal:
 ```bash
-streamlit run dashboard.py
+cd frontend
+npm install
+npm run dev
 ```
 
 ## 🎯 Usage
 
 ### Starting the System
 1. **Launch Backend**: Start the FastAPI server to begin data collection
-2. **Open Dashboard**: Access the web interface at `http://localhost:8501`
+2. **Open Dashboard**: Access the web interface at `http://localhost:5173`
 3. **Start Monitoring**: Click "Start Monitoring" to begin real-time data collection
 
 ### Monitoring Features
@@ -84,8 +98,8 @@ streamlit run dashboard.py
 
 ### AI Analysis Workflow
 1. **Data Collection**: System continuously collects logs, metrics, and repository data
-2. **Manual Trigger**: Use "Run Root Cause Analysis" button to start AI analysis
-3. **Multi-Tool Processing**: AI agent uses 3 specialized analysis tools:
+2. **Trigger**: Use "Run Root Cause Analysis" button to start AI analysis
+3. **Multi-Tool Processing**: AI agent uses specialized analysis tools:
    - Log Analysis Tool
    - Metrics Analysis Tool
    - Commits Analysis Tool
@@ -109,15 +123,24 @@ streamlit run dashboard.py
   - **Metrics Analyzer**: Analyzes performance trends and anomalies
   - **Commits Analyzer**: Correlates code changes with system issues
 
+#### Frontend Components
+- **Modern React Architecture**: Component-based architecture with hooks and context
+- **Responsive Dashboard**: Adaptive layout that works on desktop and tablet devices  
+- **Real-time Updates**: Live data streaming and automatic refresh capabilities
+- **Interactive Charts**: Dynamic metrics visualization using Recharts library
+- **Error Boundaries**: Robust error handling to prevent application crashes
+
 #### Data Storage
-- **In-Memory Buffers**: Real-time data streaming queues
+- **File-based Demo Mode**: Loads sample data from static files for demonstration
+- **In-Memory Buffers**: Real-time data streaming queues for live monitoring
 
 ### Data Flow
 1. **Collection**: Multiple collectors gather data from various sources
 2. **Processing**: Data is filtered, categorized, and stored
-3. **Streaming**: Real-time data is streamed to the dashboard
-4. **Analysis**: AI agent processes all data sources for root cause analysis
-5. **Visualization**: Results are displayed in the interactive dashboard
+3. **Demo Mode**: Static data loaded directly from files for demonstration
+4. **Live Mode**: Real-time data streamed to the React dashboard via API
+5. **Analysis**: AI agent processes all data sources for root cause analysis
+6. **Visualization**: Results displayed in interactive React components with modern UI
 
 ## 🔧 Configuration
 
@@ -125,7 +148,7 @@ streamlit run dashboard.py
 - **Model**: Google Gemini 2.5 Flash
 - **Agent Type**: Zero-shot React Description
 - **Max Iterations**: 15 for comprehensive analysis
-- **Tools**: 3 specialized analysis tools
+- **Tools**: Specialized analysis tools
 
 ### Monitoring Configuration
 - **Data Retention**: Configurable retention periods for different data types
@@ -134,11 +157,25 @@ streamlit run dashboard.py
 
 ## 📊 Dashboard Features
 
-### Main Dashboard
-- Real-time system metrics visualization
-- Interactive charts and graphs
-- System status indicators
-- Performance trend analysis
+### Modern React Interface
+- **Clean, Professional Design**: Dark theme with gradient accents and modern styling
+- **Responsive Layout**: Flexbox-based layout that adapts to different screen sizes
+- **Tabbed Navigation**: Organized content in intuitive dashboard, commits, and analysis tabs
+
+### Real-Time Monitoring
+- **System Metrics Visualization**: Interactive charts showing CPU and memory usage trends
+- **Live Log Streaming**: Real-time log display with color-coded severity levels
+- **Performance Dashboards**: Comprehensive system health overview
+
+### AI Analysis Integration  
+- **One-Click Analysis**: Simple trigger button for comprehensive root cause analysis
+- **Clean Results Display**: Analysis results formatted in readable markdown
+- **Loading States**: Professional spinner and status indicators during processing
+
+### Repository Integration
+- **GitHub Integration**: Fetch commits directly from any public repository
+- **Static Demo Data**: Pre-loaded sample data for demonstration purposes
+- **Commit Visualization**: Clean display of recent code changes and file modifications
 
 
 
