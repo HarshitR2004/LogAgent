@@ -32,27 +32,3 @@ Message: Request processed successfully
 ARNING - User: ckhan - IP: 169.243.35.140 - GET /api/v1/users - Status: 404 - Latency: 160ms
 Message: API response sent
 
-[2025-09-28T01:56:06.257608] WARNING - User: esawyer - IP: 209.251.37.150 - POST /api/v1/login - Status: 401 - Latency: 78ms
-Message: Service request completed
-[2025-09-28T01:56:06.838349] WARNING - User: esawyer - IP: 209.251.37.150 - GET /api/v1/users - Status: 401 - Latency: 188ms
-Message: Request to /api/v1/users completed - error occurred
-[2025-09-28T01:56:08.188097] WARNING - User: esawyer - IP: 209.251.37.150 - POST /api/v1/login - Status: 400 - Latency: 61ms
-Message: Handling POST /api/v1/login
-[2025-09-28T01:56:09.138835] WARNING - User: rdeleon - IP: 125.208.51.208 - GET /api/v1/orders - Status: 401 - Latency: 120ms
-Message: Service request completed
-[2025-09-28T01:56:10.681263] WARNING - User: karenhenry - IP: 72.140.190.145 - POST /api/v1/login - Status: 404 - Latency: 109ms
-Message: User karenhenry accessed /api/v1/login
-[2025-09-28T01:56:11.133251] ERROR - User: laurathompson - IP: 12.234.27.155 - POST /api/v1/login - Status: 500 - Latency: 132ms
-Message: Request processed successfully
-[2025-09-28T01:56:11.675980] ERROR - User: pgarcia - IP: 64.86.200.128 - GET / - Status: 500 - Latency: 151ms
-Message: Request to / completed
-[2025-09-28T01:56:12.607740] WARNING - User: mullenkeith - IP: 199.88.110.75 - GET /api/v1/users - Status: 401 - Latency: 52ms
-Message: User mullenkeith accessed /api/v1/users
-[2025-09-28T01:56:13.151309] WARNING - User: laurathompson - IP: 12.234.27.155 - GET /health - Status: 403 - Latency: 114ms
-Message: Request processed successfully
-[2025-09-28T01:56:13.448814] WARNING - User: mullenkeith - IP: 199.88.110.75 - POST /api/v1/users - Status: 403 - Latency: 128ms
-Message: User mullenkeith accessed /api/v1/users
-[2025-09-28T01:56:14.164901] WARNING - User: ashley11 - IP: 177.86.44.45 - GET /health - Status: 403 - Latency: 133ms
-Message: Request to /health completed - critical occurred
-[2025-09-28T01:56:15.764078] WARNING - User: briannaperez - IP: 47.149.82.209 - POST /api/v1/orders - Status: 400 - Latency: 142ms
-Message: Service request completed

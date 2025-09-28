@@ -1,5 +1,3 @@
-from langchain.agents import initialize_agent, AgentType
-
 from Tools.CommitsAnalyzer import analyze_commits
 from Tools.LogsAnalyzer import analyze_logs
 from Tools.MetricsAnalyzer import analyze_metrics
@@ -13,45 +11,69 @@ class Agent:
         
         llm_instance = LLM.get_instance()
         self.llm = llm_instance.get_model("gemini-2.5-flash")
-        
-        self.agent = initialize_agent(
-            tools=self.tools,
-            llm=self.llm,
-            agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-            verbose=True,
-            max_iterations=15,
-            early_stopping_method="generate"
-        )
-        
-        self.task = """
-        You MUST perform comprehensive root cause analysis by using ALL 3 available analysis tools in sequence:
-
-        1. MANDATORY: Use analyze_logs tool to identify error patterns and system issues
-        2. MANDATORY: Use analyze_metrics tool to identify performance bottlenecks and resource issues  
-        3. MANDATORY: Use analyze_commits tool to identify code changes that may have caused issues
-
-        After using ALL 3 tools, provide a consolidated ROOT CAUSE ANALYSIS focusing on:
-        1. Primary root cause identification
-        2. Contributing factors from each data source
-        3. Timeline correlation between commits, metrics, and logs
-        4. Evidence-based causality chain
-
-        DO NOT provide suggestions or recommendations. Focus ONLY on identifying and analyzing root causes.
-        DO NOT STOP until you have used all 3 tools and provided the root cause analysis.
-        """
     
-    def invoke(self, custom_task=None):
+    def invoke(self):
         """
-        Invoke the AI Agent to perform analysis
-        
-        Args:
-            custom_task (str, optional): Custom task to override default task
+        Invoke each tool sequentially and then perform final analysis
         
         Returns:
             dict: Analysis results from the agent
         """
-        task_to_run = custom_task if custom_task else self.task
-        return self.agent.invoke({"input": task_to_run})
+        results = {}
+        
+        try:
+            # Execute each tool exactly once
+            print("Step 1: Analyzing logs...")
+            logs_result = analyze_logs.invoke({"query": "Analyze system logs for errors and issues"})
+            results["logs_analysis"] = logs_result
+            
+            print("Step 2: Analyzing metrics...")
+            metrics_result = analyze_metrics.invoke({"query": "Analyze performance metrics for bottlenecks"})
+            results["metrics_analysis"] = metrics_result
+            
+            print("Step 3: Analyzing commits...")
+            commits_result = analyze_commits.invoke({"query": "Analyze recent commits for potential issues"})
+            results["commits_analysis"] = commits_result
+            
+            # Now use LLM for final consolidated analysis
+            print("Step 4: Performing root cause analysis...")
+            final_analysis_prompt = f"""
+            Based on the following analysis results from each tool, provide a comprehensive ROOT CAUSE ANALYSIS:
+
+            LOGS ANALYSIS:
+            {logs_result}
+
+            METRICS ANALYSIS:
+            {metrics_result}
+
+            COMMITS ANALYSIS:
+            {commits_result}
+
+            Provide a consolidated ROOT CAUSE ANALYSIS focusing on:
+            1. Primary root cause identification
+            2. Contributing factors from each data source
+            3. Timeline correlation between commits, metrics, and logs
+            4. Evidence-based causality chain
+
+            DO NOT provide suggestions or recommendations. Focus ONLY on identifying and analyzing root causes.
+            """
+            
+            final_result = self.llm.invoke(final_analysis_prompt)
+            results["root_cause_analysis"] = final_result.content if hasattr(final_result, 'content') else str(final_result)
+            
+            return {
+                "input": "Root cause analysis completed",
+                "output": results["root_cause_analysis"],
+                "intermediate_steps": [
+                    ("analyze_logs", logs_result),
+                    ("analyze_metrics", metrics_result),
+                    ("analyze_commits", commits_result)
+                ]
+            }
+            
+        except Exception as e:
+            print(f"Agent execution error: {e}")
+            return {"error": str(e), "partial_results": results}
 
 # Create a global instance for backward compatibility
 agent = Agent()

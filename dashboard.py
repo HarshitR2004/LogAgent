@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import streamlit as st
 import pandas as pd
 import plotly.graph_objs as go
@@ -43,12 +42,12 @@ if 'agent_analysis' not in st.session_state:
     st.session_state.agent_analysis = None
 if 'agent_analysis_loading' not in st.session_state:
     st.session_state.agent_analysis_loading = False
-if 'last_agent_check' not in st.session_state:
-    st.session_state.last_agent_check = None
-if 'monitoring_stopped_time' not in st.session_state:
-    st.session_state.monitoring_stopped_time = None
-if 'previous_monitoring_status' not in st.session_state:
-    st.session_state.previous_monitoring_status = True
+if 'analysis_steps' not in st.session_state:
+    st.session_state.analysis_steps = {
+        "logs": {"status": "pending", "name": "System Logs Analysis"},
+        "metrics": {"status": "pending", "name": "Performance Metrics Analysis"},
+        "commits": {"status": "pending", "name": "Code Commits Analysis"}
+    }
 
 def check_api_status():
     """Check if the API is running and get monitoring status"""
@@ -86,47 +85,46 @@ def fetch_agent_analysis():
     except Exception as e:
         return {"status": "error", "message": f"Failed to fetch analysis: {e}"}
 
-def check_for_agent_analysis():
-    """Check for new agent analysis and update session state"""
-    # Check if we need to wait after monitoring stopped
-    current_time = time.time()
-    
-    # If monitoring just stopped, wait 3 seconds before checking for analysis
-    if (st.session_state.monitoring_stopped_time and 
-        current_time - st.session_state.monitoring_stopped_time < 3):
-        # Still in waiting period - but check if analysis has started
-        # This allows us to detect in_progress status even during wait period
-        analysis_result = fetch_agent_analysis()
-        if analysis_result and analysis_result.get("status") == "in_progress":
-            # Analysis has started during wait period - show loading immediately
-            st.session_state.agent_analysis_loading = True
-            st.session_state.agent_analysis = analysis_result
-            st.session_state.monitoring_stopped_time = None  # Clear wait timer
+def update_analysis_steps(analysis_result):
+    """Update analysis steps based on the current analysis content"""
+    if not analysis_result or analysis_result.get("status") != "in_progress":
         return
     
-    analysis_result = fetch_agent_analysis()
-    if analysis_result:
-        print(f"DEBUG Dashboard: Received status: {analysis_result.get('status')}")
+    # Get the current analysis content
+    analysis_content = analysis_result.get("analysis", {})
+    
+    # Initialize all steps as pending
+    for step in st.session_state.analysis_steps:
+        if st.session_state.analysis_steps[step]["status"] not in ["completed"]:
+            st.session_state.analysis_steps[step]["status"] = "pending"
+    
+    # Analyze the content to determine which tools have been used
+    if isinstance(analysis_content, dict):
+        content_str = str(analysis_content).lower()
+    elif isinstance(analysis_content, str):
+        content_str = analysis_content.lower()
+    else:
+        return
+    
+    # Check for evidence of each tool being used
+    if "logs" in content_str or "log analysis" in content_str or "error" in content_str:
+        st.session_state.analysis_steps["logs"]["status"] = "completed"
+    
+    if "metrics" in content_str or "cpu" in content_str or "memory" in content_str or "performance" in content_str:
+        st.session_state.analysis_steps["metrics"]["status"] = "completed"
         
-        if analysis_result.get("status") == "completed":
-            # New analysis completed
-            if st.session_state.agent_analysis != analysis_result:
-                print("DEBUG Dashboard: Analysis completed - updating state")
-                st.session_state.agent_analysis = analysis_result
-                st.session_state.agent_analysis_loading = False
-                st.session_state.monitoring_stopped_time = None
-                st.rerun()  # Force refresh to show new analysis
-            else:
-                print("DEBUG Dashboard: Analysis completed but already have same result")
-        elif analysis_result.get("status") == "in_progress":
-            # Analysis is currently running - show loading state
-            print("DEBUG Dashboard: Analysis in progress")
-            st.session_state.agent_analysis_loading = True
-            st.session_state.agent_analysis = analysis_result
-        elif analysis_result.get("status") == "no_analysis":
-            # No analysis yet
-            print("DEBUG Dashboard: No analysis available")
-            st.session_state.agent_analysis_loading = False
+    if "commit" in content_str or "code" in content_str or "repository" in content_str:
+        st.session_state.analysis_steps["commits"]["status"] = "completed"
+    
+    # Determine current step based on what's completed
+    completed_count = sum(1 for step in st.session_state.analysis_steps.values() if step["status"] == "completed")
+    
+    if completed_count == 0:
+        st.session_state.analysis_steps["logs"]["status"] = "running"
+    elif completed_count == 1 and st.session_state.analysis_steps["logs"]["status"] == "completed":
+        st.session_state.analysis_steps["metrics"]["status"] = "running"
+    elif completed_count == 2:
+        st.session_state.analysis_steps["commits"]["status"] = "running"
 
 def fetch_commits_data(repo=None, k=5, use_static=False):
     """Fetch commits data from API"""
@@ -186,33 +184,18 @@ def fetch_streaming_data():
                     except json.JSONDecodeError:
                         continue
         
-        # Also check for agent analysis updates with debug info
-        try:
-            analysis_result = fetch_agent_analysis()
-            if analysis_result:
-                print(f"DEBUG: Agent analysis status: {analysis_result.get('status')}")
-                if analysis_result.get("status") == "in_progress":
-                    print("DEBUG: Setting loading state to True")
-                    st.session_state.agent_analysis_loading = True
-        except Exception as e:
-            print(f"DEBUG: Error checking agent analysis: {e}")
-        
-        check_for_agent_analysis()
-        
     except:
         pass
 
 def main():
-    st.title("Real-Time System Monitoring Dashboard")
+    st.title("LogAgent Dashboard")
     st.markdown("---")
     
-    # Load static commits by default on first run
     if not st.session_state.commits_data:
         static_commits = fetch_commits_data(repo=None, k=5, use_static=True)
         if static_commits:
             st.session_state.commits_data = static_commits
     
-    # Initialize auto_refresh outside sidebar to avoid scope issues
     auto_refresh = False
     
     # Sidebar for controls
@@ -225,15 +208,6 @@ def main():
         if api_running:
             st.success("API Connected")
             is_generating = status_data.get('is_generating', False)
-            
-            # Detect when monitoring stops (transition from active to stopped)
-            if st.session_state.previous_monitoring_status and not is_generating:
-                # Monitoring just stopped - record the time
-                st.session_state.monitoring_stopped_time = time.time()
-                print("Monitoring stopped - waiting 3 seconds before checking for AI analysis")
-            
-            # Update the previous status
-            st.session_state.previous_monitoring_status = is_generating
             
             if is_generating:
                 st.info("Monitoring Active")
@@ -248,6 +222,7 @@ def main():
                     if start_monitoring():
                         st.success("Monitoring started!")
                         time.sleep(1)
+                        st.rerun()
                         st.rerun()
         else:
             st.error("API Not Available")
@@ -265,6 +240,12 @@ def main():
                         if result.get("status") == "started":
                             st.success("Root cause analysis started!")
                             st.session_state.agent_analysis_loading = True
+                            # Reset analysis steps for new analysis
+                            st.session_state.analysis_steps = {
+                                "logs": {"status": "pending", "name": "System Logs Analysis"},
+                                "metrics": {"status": "pending", "name": "Performance Metrics Analysis"},
+                                "commits": {"status": "pending", "name": "Code Commits Analysis"}
+                            }
                         else:
                             st.warning(result.get("message", "Unknown response"))
                     else:
@@ -494,56 +475,48 @@ def main():
         with tab3:
             st.header("Comprehensive Root Cause Analysis")
             
-            check_for_agent_analysis()
-            
-            # Display agent analysis status
-            analysis_col1, analysis_col2 = st.columns([3, 1])
-            
-            with analysis_col2:
-                if st.button("Check Analysis", help="Check for new root cause analysis results"):
+            # Automatically fetch and update analysis status
+            analysis_result = fetch_agent_analysis()
+            if analysis_result:
+                st.session_state.agent_analysis = analysis_result
+                if analysis_result.get("status") == "in_progress":
                     st.session_state.agent_analysis_loading = True
-                    check_for_agent_analysis()
-            
-            with analysis_col1:
-                # Check if we're in the 3-second waiting period after monitoring stopped
-                current_time = time.time()
-                if (st.session_state.monitoring_stopped_time and 
-                    current_time - st.session_state.monitoring_stopped_time < 3):
-                    # Show waiting state (this is now unused since no automatic triggers)
-                    st.info("Monitoring stopped. Use 'Run Root Cause Analysis' button to analyze the data.")
-                    st.markdown("**Manual analysis mode: Analysis must be triggered manually.**")
-                    
-                elif st.session_state.agent_analysis_loading:
-                    # Enhanced loading state display
+                    update_analysis_steps(analysis_result)
+                elif analysis_result.get("status") == "completed":
+                    st.session_state.agent_analysis_loading = False
+                    # Mark all steps as completed
+                    for step in st.session_state.analysis_steps:
+                        st.session_state.analysis_steps[step]["status"] = "completed"
+                if st.session_state.agent_analysis_loading:
                     st.warning("Comprehensive Root Cause Analysis in Progress")
                     
-                    # Create loading progress display
-                    st.markdown("### Analysis Status")
-                    st.info("The AI Agent is systematically analyzing all available data sources using 3 specialized tools...")
-                    
-                    # Progress indicator - simplified version
-                    progress_bar = st.progress(0)
-                    for i in range(100):
-                        progress_bar.progress(i + 1)
+                    # Use st.status to show detailed analysis steps
+                    with st.status("AI Agent Root Cause Analysis", expanded=True) as status:
+                        for step_key, step_info in st.session_state.analysis_steps.items():
+                            step_name = step_info["name"]
+                            step_status = step_info["status"]
+                            
+                            if step_status == "completed":
+                                st.success(f"{step_name} - Completed")
+                            elif step_status == "running":
+                                st.info(f"{step_name} - Currently analyzing...")
+                            else:  # pending
+                                st.write(f"{step_name} - Waiting to start")
                         
-                    # Current analysis step
-                    st.text("Analyzing: System logs, Performance metrics, Code commits")
-                    
-                    # Analysis tools information
-                    st.markdown("### Active Analysis Tools")
-                    tools_col1, tools_col2 = st.columns(2)
-                    
-                    with tools_col1:
-                        st.markdown("**Data Sources:**")
-                        st.write("• System Logs Analysis")
-                        st.write("• Performance Metrics Analysis")
-                    
-                    with tools_col2:
-                        st.markdown("**Pattern Analysis:**") 
-                        st.write("• Code Commits Analysis")
-                    
-                    st.markdown("---")
-                    st.info("**Analysis is running. Results will appear here when complete.**")
+                        # Show overall status
+                        completed_steps = sum(1 for step in st.session_state.analysis_steps.values() if step["status"] == "completed")
+                        total_steps = len(st.session_state.analysis_steps)
+                        
+                        if completed_steps == total_steps:
+                            st.success(f"Analysis complete! All {total_steps} tools have finished.")
+                            status.update(label="Analysis Complete ✅", state="complete", expanded=False)
+                        else:
+                            running_steps = [step["name"] for step in st.session_state.analysis_steps.values() if step["status"] == "running"]
+                            if running_steps:
+                                current_step = running_steps[0]
+                                status.update(label=f"Running: {current_step}", state="running")
+                            else:
+                                status.update(label="Initializing analysis...", state="running")
                     
                 elif st.session_state.agent_analysis:
                     analysis_data = st.session_state.agent_analysis

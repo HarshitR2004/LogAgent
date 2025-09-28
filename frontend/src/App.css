@@ -1,0 +1,10 @@
+.App {
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Ensure charts are responsive */
+.recharts-responsive-container {
+  width: 100% !important;
+  height: 100% !important;
+}
