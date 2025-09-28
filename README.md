@@ -128,11 +128,8 @@ npm run dev
 - **Responsive Dashboard**: Adaptive layout that works on desktop and tablet devices  
 - **Real-time Updates**: Live data streaming and automatic refresh capabilities
 - **Interactive Charts**: Dynamic metrics visualization using Recharts library
-- **Error Boundaries**: Robust error handling to prevent application crashes
 
-#### Data Storage
-- **File-based Demo Mode**: Loads sample data from static files for demonstration
-- **In-Memory Buffers**: Real-time data streaming queues for live monitoring
+
 
 ### Data Flow
 1. **Collection**: Multiple collectors gather data from various sources
