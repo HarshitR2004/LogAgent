@@ -137,8 +137,6 @@ npm run dev
 ### Data Flow
 1. **Collection**: Multiple collectors gather data from various sources
 2. **Processing**: Data is filtered, categorized, and stored
-3. **Demo Mode**: Static data loaded directly from files for demonstration
-4. **Live Mode**: Real-time data streamed to the React dashboard via API
 5. **Analysis**: AI agent processes all data sources for root cause analysis
 6. **Visualization**: Results displayed in interactive React components with modern UI
 
