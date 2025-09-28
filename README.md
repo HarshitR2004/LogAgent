@@ -142,40 +142,9 @@ npm run dev
 5. **Analysis**: AI agent processes all data sources for root cause analysis
 6. **Visualization**: Results displayed in interactive React components with modern UI
 
-## 🔧 Configuration
 
-### AI Model Configuration
-- **Model**: Google Gemini 2.5 Flash
-- **Agent Type**: Zero-shot React Description
-- **Max Iterations**: 15 for comprehensive analysis
-- **Tools**: Specialized analysis tools
 
-### Monitoring Configuration
-- **Data Retention**: Configurable retention periods for different data types
-- **Refresh Rates**: Customizable update intervals
-- **Alert Thresholds**: Configurable performance thresholds
 
-## 📊 Dashboard Features
-
-### Modern React Interface
-- **Clean, Professional Design**: Dark theme with gradient accents and modern styling
-- **Responsive Layout**: Flexbox-based layout that adapts to different screen sizes
-- **Tabbed Navigation**: Organized content in intuitive dashboard, commits, and analysis tabs
-
-### Real-Time Monitoring
-- **System Metrics Visualization**: Interactive charts showing CPU and memory usage trends
-- **Live Log Streaming**: Real-time log display with color-coded severity levels
-- **Performance Dashboards**: Comprehensive system health overview
-
-### AI Analysis Integration  
-- **One-Click Analysis**: Simple trigger button for comprehensive root cause analysis
-- **Clean Results Display**: Analysis results formatted in readable markdown
-- **Loading States**: Professional spinner and status indicators during processing
-
-### Repository Integration
-- **GitHub Integration**: Fetch commits directly from any public repository
-- **Static Demo Data**: Pre-loaded sample data for demonstration purposes
-- **Commit Visualization**: Clean display of recent code changes and file modifications
 
 
 
