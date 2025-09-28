@@ -98,7 +98,7 @@ class CommitsCollector:
                 "files": []
             }
             for mod in commit.modifications:
-                if mod.source_code:  # Only include files with source code
+                if mod.source_code: 
                     commit_info["files"].append({
                         "filename": mod.filename,
                         "code": mod.source_code

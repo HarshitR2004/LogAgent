@@ -18,6 +18,8 @@ LogAgent is an advanced real-time system monitoring platform with AI-powered roo
 
 ### Backend
 - **FastAPI**: High-performance Python web framework for API development
+- **MongoDB**: NoSQL database for storing logs, metrics, and commit data
+- **PyMongo**: Official MongoDB driver for Python
 
 ### Frontend & Visualization
 - **React**: Modern JavaScript framework with hooks and functional components
@@ -35,15 +37,35 @@ LogAgent is an advanced real-time system monitoring platform with AI-powered roo
 - Python 3.10 or higher
 - Node.js 18 or higher
 - npm or yarn package manager
+- MongoDB 4.4 or higher (local installation or MongoDB Atlas)
 
 ## 🚀 Installation & Setup
 
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/HarshitR2004/LogAgent.git
+cd LogAgent
 ```
 
-### 2. Install Dependencies
+### 2. Set Up MongoDB
+#### Option A: Local MongoDB Installation
+1. Install MongoDB Community Edition from [MongoDB Downloads](https://www.mongodb.com/try/download/community)
+2. Start the MongoDB service:
+   ```bash
+   # On Windows (as Administrator)
+   net start MongoDB
+   
+   # On macOS/Linux
+   sudo systemctl start mongod
+   ```
+3. Ensure MongoDB is running on the default port `27017`
+
+#### Option B: MongoDB Atlas (Cloud)
+1. Create a free account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Create a new cluster and get the connection string
+3. Update the MongoDB connection string in `Backend/Services/MongoClient.py` if using a custom connection
+
+### 3. Install Dependencies
 
 #### Backend Dependencies
 ```bash
@@ -56,23 +78,30 @@ cd frontend
 npm install
 ```
 
-### 3. Environment Configuration
+### 4. Environment Configuration
 Create a `.env` file in the root directory with your API keys:
 ```env
 GOOGLE_API_KEY=your_gemini_api_key_here
+# Optional: Custom MongoDB connection string
+# MONGODB_URI=your_mongodb_connection_string_here
 ```
 
-### 4. Start the Backend Services
+### 5. Initialize Database (First Time Setup)
+Run the data migration script to set up the database structure:
 ```bash
-cd backend
+python migrate_data.py
+```
+
+### 6. Start the Backend Services
+```bash
+cd Backend
 uvicorn main:app --reload --port 8000
 ```
 
-### 5. Launch the Frontend Dashboard
+### 7. Launch the Frontend Dashboard
 In a new terminal:
 ```bash
 cd frontend
-npm install
 npm run dev
 ```
 
@@ -103,10 +132,18 @@ npm run dev
 ### System Components
 
 #### Backend Services
-- **Log Filter**: Processes and categorizes log entries
-- **Metrics Collector**: Gathers system performance data
+- **MongoDB Client**: Centralized database operations for all data storage and retrieval
+- **Log Filter**: Processes and categorizes log entries, stores in MongoDB
+- **Metrics Collector**: Gathers system performance data, persists to MongoDB
 - **Event Detection**: Identifies significant system events
-- **Commits Collector**: Analyzes repository changes
+- **Commits Collector**: Analyzes repository changes, stores commit data in MongoDB
+
+#### Data Storage
+- **MongoDB Collections**:
+  - **logs**: System logs with filtering and categorization
+  - **metrics**: Performance metrics and system telemetry
+  - **commits**: Repository commit history and code changes
+- **Indexed Collections**: Optimized database queries for real-time performance
 
 #### AI Analysis Engine
 - **Agent Controller**: Orchestrates multi-tool analysis workflow
@@ -124,9 +161,32 @@ npm run dev
 
 ### Data Flow
 1. **Collection**: Multiple collectors gather data from various sources
-2. **Processing**: Data is filtered, categorized, and stored
+2. **Storage**: All data is stored in MongoDB collections with proper indexing
+3. **Processing**: Data is filtered, categorized, and structured in the database
+4. **Retrieval**: Frontend and AI components query MongoDB for real-time data
 5. **Analysis**: AI agent processes all data sources for root cause analysis
 6. **Visualization**: Results displayed in interactive React components with modern UI
+
+## 🗃 Database Configuration
+
+### MongoDB Setup
+LogAgent uses MongoDB to store all monitoring data including logs, metrics, and commit information. The system creates three main collections:
+
+- **logs**: Stores system logs with timestamp, level, user info, and messages
+- **metrics**: Contains system performance data (CPU, memory usage, etc.)
+- **commits**: Repository commit history with file changes and metadata
+
+### Database Configuration Options
+The MongoDB client can be configured in `Backend/Services/MongoClient.py`:
+- **Connection String**: Default is `mongodb://localhost:27017/`
+- **Database Name**: Default is `logagent`
+- **Collections**: Automatically created with proper indexing
+
+### Troubleshooting MongoDB
+- **Connection Issues**: Ensure MongoDB is running and accessible
+- **Performance**: The system creates indexes automatically for optimal query performance
+- **Storage**: Monitor disk space as logs and metrics can grow over time
+- **Migration**: Use the provided migration script to initialize or transfer data
 
 
 
