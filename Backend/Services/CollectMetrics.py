@@ -1,11 +1,10 @@
 from datetime import datetime
 import os
+from .MongoClient import MongoDBClient
 
 class MetricsCollector:
-    def __init__(self):
-        # Set path to data folder in project root
-        project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        self.metrics_file = os.path.join(project_root, "data", "metrics.txt")
+    def __init__(self, mongo_client=None):
+        self.mongo_client = mongo_client or MongoDBClient()
 
     def collect_metric(self, metrics):
         """Collect and store a metric"""
@@ -20,19 +19,33 @@ class MetricsCollector:
             self.store_metrics(collected_metrics)
         
     def store_metrics(self, metrics):
-        """Store metric to file"""
+        """Store metrics to MongoDB"""
         try:
-            with open(self.metrics_file, 'a', encoding='utf-8') as f:
-                f.write(f"\n=== Metrics Session - {datetime.now().isoformat()} ===\n")
-                for metric in metrics:
-                    # Format metric entry as a string
-                    metric_entry = (f"[{metric.get('timestamp', 'N/A')}] "
-                                  f"CPU: {metric.get('cpu_percent', 'N/A')}% - "
-                                  f"Memory: {metric.get('memory_percent', 'N/A')}% - "
-                                  f"Memory Used: {metric.get('memory_used_mb', 'N/A')}MB - "
-                                  f"Memory Total: {metric.get('memory_total_mb', 'N/A')}MB\n")
-                    f.write(metric_entry)
-                
+            # Ensure all metrics have required fields
+            for metric in metrics:
+                if 'metric_type' not in metric:
+                    metric['metric_type'] = 'system'
+                if 'timestamp' not in metric:
+                    metric['timestamp'] = datetime.utcnow()
+            
+            # Store in MongoDB
+            self.mongo_client.store_metrics(metrics)
                 
         except Exception as e:
-            print(f"Error storing metric: {e}")
+            print(f"Error storing metrics to MongoDB: {e}")
+    
+    def get_metrics(self, limit=1000, metric_type=None):
+        """Get metrics from MongoDB"""
+        try:
+            return self.mongo_client.get_metrics(limit=limit, metric_type=metric_type)
+        except Exception as e:
+            print(f"Error retrieving metrics from MongoDB: {e}")
+            return []
+    
+    def clear_metrics(self):
+        """Clear metrics from MongoDB"""
+        try:
+            return self.mongo_client.clear_metrics()
+        except Exception as e:
+            print(f"Error clearing metrics: {e}")
+            return False

@@ -12,6 +12,7 @@ from DataCollectors.CommitsCollector import CommitsCollector
 from Services.LogFilter import LogFilter
 from Services.CollectMetrics import MetricsCollector
 from Services.EventDetection import EventDetection
+from Services.MongoClient import MongoDBClient
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'AI'))
 from Agent import Agent
@@ -26,9 +27,14 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
+
+# Initialize MongoDB client
+mongo_client = MongoDBClient()
+
+# Initialize components with MongoDB client
 generator = TelemetryGenerator(min_delay=0.2, max_delay=0.8)
-log_filter = LogFilter()
-metrics_collector = MetricsCollector()
+log_filter = LogFilter(mongo_client=mongo_client)
+metrics_collector = MetricsCollector(mongo_client=mongo_client)
 event_detector = EventDetection()
 
 ai_agent = Agent()
@@ -47,6 +53,19 @@ async def run_agent_analysis():
     analysis_in_progress = True
     try:
         print("Starting comprehensive AI Agent root cause analysis...")
+        
+        # Get data from MongoDB instead of files
+        print("Fetching logs from MongoDB...")
+        logs = mongo_client.get_filtered_logs(limit=500)
+        print(f"Retrieved {len(logs)} logs from MongoDB")
+        
+        print("Fetching metrics from MongoDB...")
+        metrics = mongo_client.get_metrics(limit=100)
+        print(f"Retrieved {len(metrics)} metrics from MongoDB")
+        
+        print("Fetching commits from MongoDB...")
+        commits = mongo_client.get_commits(limit=10)
+        print(f"Retrieved {len(commits)} commits from MongoDB")
         
         # Run the agent in a thread pool to avoid blocking the event loop
         loop = asyncio.get_event_loop()
@@ -191,8 +210,14 @@ async def log_event_stream():
             await asyncio.sleep(0.5)
 
 @app.get("/logs")
-async def stream_logs():
-    return StreamingResponse(log_event_stream(), media_type="text/event-stream")
+async def get_logs():
+    """Get logs from MongoDB"""
+    try:
+        logs = mongo_client.get_logs(limit=1000)
+        return {"logs": logs}
+    except Exception as e:
+        print(f"Error retrieving logs from MongoDB: {e}")
+        return {"logs": []}
 
 async def metric_event_stream():
     """Stream metrics in real-time during generation, then stop"""
@@ -213,55 +238,65 @@ async def metric_event_stream():
             await asyncio.sleep(0.5)
 
 @app.get("/metrics")
-async def stream_metrics():
-    return StreamingResponse(metric_event_stream(), media_type="text/event-stream")
+async def get_metrics():
+    """Get metrics from MongoDB"""
+    try:
+        metrics = mongo_client.get_metrics(limit=1000)
+        return {"metrics": metrics}
+    except Exception as e:
+        print(f"Error retrieving metrics from MongoDB: {e}")
+        return {"metrics": []}
 
 
 @app.get("/commits")
-async def collect_commits(repo: str = None, k: int = 3, use_static: bool = False):
-    
+async def get_commits(repo: str = None, k: int = 3, use_static: bool = False):
+    """Get commits from MongoDB or fetch from repository"""
     try:
         if use_static or not repo:
-            collector = CommitsCollector("")
-            commits = collector.get_commits_from_json(k)
+            # Get from MongoDB
+            commits = mongo_client.get_commits(limit=k)
             return {"commits": commits}
         
-        collector = CommitsCollector(repo)
+        # Try to fetch from repository and store in MongoDB
+        collector = CommitsCollector(repo, mongo_client=mongo_client)
         try:
             commits_data = collector.get_last_k_commits(k)
             return {"commits": commits_data}
         except Exception as repo_error:
             print(f"Repository access failed: {repo_error}")
-            commits = collector.get_commits_from_json(k)
+            # Fallback to MongoDB data
+            commits = mongo_client.get_commits(limit=k)
             return {"commits": commits}
     
     except Exception as e:
+        print(f"Error getting commits: {e}")
         return {"commits": []}
 
 
 @app.get("/commits/info")
 async def get_commits_info():
-    static_data_available = False
-    static_commit_count = 0
+    """Get information about commits stored in MongoDB"""
     try:
-        path_obj = Path("data/commit.json")
-        if path_obj.exists():
-            with open(path_obj, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            static_commit_count = len(data.get("commits", []))
-            static_data_available = True
-    except Exception:
-        pass
-    
-    return {
-        "static_data_available": static_data_available,
-        "static_commit_count": static_commit_count,
-        "usage_examples": {
-            "use_static_data": "/commits?use_static=true&k=5",
-            "try_repo_fallback_static": "/commits?repo=https://github.com/user/repo.git&k=3",
-            "force_static_with_repo": "/commits?repo=my-repo&use_static=true&k=10"
+        stats = mongo_client.get_collection_stats()
+        commit_count = stats.get('commits', 0)
+        
+        return {
+            "mongodb_available": True,
+            "commit_count": commit_count,
+            "usage_examples": {
+                "get_all_commits": "/commits",
+                "get_limited_commits": "/commits?k=5",
+                "fetch_from_repo": "/commits?repo=https://github.com/user/repo.git&k=3",
+                "force_mongodb_data": "/commits?use_static=true&k=10"
+            }
         }
-    }
+    except Exception as e:
+        print(f"Error getting commits info: {e}")
+        return {
+            "mongodb_available": False,
+            "commit_count": 0,
+            "error": str(e)
+        }
 
 
 @app.post("/stop")

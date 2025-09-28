@@ -77,27 +77,14 @@ export const apiService = {
     }
   },
 
-  // Fetch commits data
+  // Fetch commits data from MongoDB via API
   async fetchCommits(repo = null, k = 5, useStatic = false) {
     try {
-      // If loading static commits, load directly from file
-      if (useStatic) {
-        const { loadJsonFile, parseCommitsFromJson } = await import('../utils/fileParser.js');
-        const jsonData = await loadJsonFile('/data/commit.json');
-        if (jsonData) {
-          const commits = parseCommitsFromJson(jsonData);
-          const limitedCommits = k ? commits.slice(0, k) : commits;
-          console.log(`Loaded ${limitedCommits.length} commits from file`);
-          return { success: true, data: { commits: limitedCommits } };
-        }
-        throw new Error('Failed to load commits from file');
-      }
-
-      // For repository commits, use API
       const params = { k, use_static: useStatic };
       if (repo) params.repo = repo;
 
       const response = await api.get('/commits', { params });
+      console.log(`Loaded ${response.data.commits?.length || 0} commits from MongoDB`);
       return { success: true, data: response.data };
     } catch (error) {
       console.error('Error fetching commits:', error);
@@ -105,7 +92,7 @@ export const apiService = {
     }
   },
 
-  // Get commits info
+  // Get commits info from MongoDB
   async getCommitsInfo() {
     try {
       const response = await api.get('/commits/info');
@@ -115,32 +102,26 @@ export const apiService = {
     }
   },
 
-  // Fetch logs from text file
+  // Fetch logs from MongoDB via API
   async fetchLogs() {
     try {
-      const { loadTextFile, parseLogsFromText } = await import('../utils/fileParser.js');
-      const logText = await loadTextFile('/data/filteredLogs.txt');
-      const logs = parseLogsFromText(logText);
-      
-      console.log(`Loaded ${logs.length} logs from file`);
-      return { success: true, data: logs };
+      const response = await api.get('/logs');
+      console.log(`Loaded ${response.data.logs?.length || 0} logs from MongoDB`);
+      return { success: true, data: response.data.logs || [] };
     } catch (error) {
-      console.error('Error fetching logs from file:', error);
+      console.error('Error fetching logs from MongoDB:', error);
       return { success: false, error: error.message };
     }
   },
 
-  // Fetch metrics from text file
+  // Fetch metrics from MongoDB via API
   async fetchMetrics() {
     try {
-      const { loadTextFile, parseMetricsFromText } = await import('../utils/fileParser.js');
-      const metricsText = await loadTextFile('/data/metrics.txt');
-      const metrics = parseMetricsFromText(metricsText);
-      
-      console.log(`Loaded ${metrics.length} metrics from file`);
-      return { success: true, data: metrics };
+      const response = await api.get('/metrics');
+      console.log(`Loaded ${response.data.metrics?.length || 0} metrics from MongoDB`);
+      return { success: true, data: response.data.metrics || [] };
     } catch (error) {
-      console.error('Error fetching metrics from file:', error);
+      console.error('Error fetching metrics from MongoDB:', error);
       return { success: false, error: error.message };
     }
   }
